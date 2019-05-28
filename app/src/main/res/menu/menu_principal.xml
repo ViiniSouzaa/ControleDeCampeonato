@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/groupCores"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menuItemPreto"
+            android:title="@string/preto" />
+        <item
+            android:id="@+id/menuItemVerde"
+            android:title="@string/verde" />
+    </group>
+</menu>

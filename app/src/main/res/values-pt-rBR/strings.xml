@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Controle de Campeonato</string>
+    <string name="adicionaCampeonato" >ADICIONAR CAMPEONATO</string>
+    <string name="editaCampeonato" >EDITAR CAMPEONATO</string>
+    <string name="excluirCampeonato">EXCLUIR CAMPEONATO</string>
+    <string name="campeonatos">CAMPEONATOS</string>
+    <string name="max_time">MAX. 20</string>
+    <string name="insira_quantidade_times">INSIRA O NUMERO DE TIMES :</string>
+    <string name="ok">OK</string>
+    <string name="adicionaTime">ADICIONAR TIME</string>
+    <string name="adicione_novo_time" >DIGITE O NOME DO TIME</string>
+    <string name="nome">NOME</string>
+    <string name="adicioneNomeCampeonato">Digite o nome do campeonato</string>
+    <string name="insira_quantidade_valida">DIGITE UM NUMERO VALIDO DE TIMES</string>
+    <string name="insira_nome_campeonato">INSIRA UM NOME PARA O CAMPEONATO</string>
+    <string name="insira_nome_time">INSIRA UM NOME PARA O TIME</string>
+    <string name="altera_time">ALTERAR TIME</string>
+    <string name="alterar">ALTERAR</string>
+    <string name="excluir">EXCLUIR</string>
+    <string name="cancelar">CANCELAR</string>
+    <string name="deseja_excluir">DESEJA EXCLUIR</string>
+    <string name="sim">SIM</string>
+    <string name="nao">NAO</string>
+    <string name="sobre">SOBRE</string>
+    <string name="descricao">APLICATIVO TEM O OBJETIVO DE ORGANIZAR CAMPEONATOS DE PONTOS CORRIDOS, ONDE PODERAO SER SALVOS OS TIMES PARTICIPANTES, E TAMBEM ORGANIZADOS OS JOGOS ENTRE SI, MOSTRANDO UMA TABELA DOS RESULTADOS</string>
+    <string name="preto">PRETO</string>
+    <string name="verde">VERDE</string>
+    <string name="autor">AUTOR : JOÃO VITTOR DE MORAES SANCHES</string>
+</resources>

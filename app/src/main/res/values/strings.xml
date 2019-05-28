@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Championship control</string>
+    <string name="adicionaCampeonato" >ADD CHAMPIONSHIP</string>
+    <string name="editaCampeonato" >EDIT CHAMPIONSHIP</string>
+    <string name="excluirCampeonato">DELETE CHAMPIOSHIP</string>
+    <string name="campeonatos">CHAMPIONSHIPS</string>
+    <string name="max_time">MAX 20</string>
+    <string name="insira_quantidade_times">ENTER THE NUMBER OF TEAMS</string>
+    <string name="ok">OK</string>
+    <string name="adicionaTime">ADD TEAM</string>
+    <string name="adicione_novo_time" >ENTER THE TEAM NAME</string>
+    <string name="nome">NAME</string>
+    <string name="adicioneNomeCampeonato">ENTER THE NAME OF THE CHAMPIONSHIP</string>
+    <string name="insira_quantidade_valida">ENTER A VALID TEAM NUMBER</string>
+    <string name="insira_nome_campeonato">ENTER A NAME OF THE CHAMPIONSHIP</string>
+    <string name="insira_nome_time">ENTER A NAME OF THE TEAMS</string>
+    <string name="altera_time">EDIT TEAM</string>
+    <string name="alterar">EDIT</string>
+    <string name="excluir">DELETE</string>
+    <string name="cancelar">CANCEL</string>
+    <string name="deseja_excluir">DO YOU WANT TO DELETE?</string>
+    <string name="sim">YES</string>
+    <string name="nao">NO</string>
+    <string name="sobre">ABOUT</string>
+    <string name="descricao">" APPLICATION HAS THE OBJECTIVE TO ORGANIZE CHAMPIONSHIPS OF CORRIDOR POINTS, WHERE THE PARTICIPATING TIMES CAN BE SAVED, AND THE GAMES ORGANIZED BETWEEN THEY, SHOWING A TABLE OF THE RESULT"</string>
+    <string name="preto">BLACK</string>
+    <string name="verde">GREEN</string>
+    <string name="autor">AUTHOR: JOÃO VITTOR DE MORAES SANCHES</string>
+</resources>
