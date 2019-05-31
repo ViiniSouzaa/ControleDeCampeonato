@@ -20,52 +20,38 @@ import com.example.controledecampeonato.dao.CampeonatoDatabase;
 import com.example.controledecampeonato.modelo.Campeonato;
 import com.example.controledecampeonato.modelo.Time;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class NovoCampeonatoActivity extends AppCompatActivity {
-
+public class AlteraCampeonato extends AppCompatActivity {
     Intent intent;
-    Button adicionaTime, adicionaCampeonato, adicionaQtdTimes;
-    ArrayList<String> times;
+    Button adicionaTime, editaCampeonato, adicionaQtdTimes;
+    List<Time> times;
     ListView listViewTimes;
     EditText editTextQtdTimes, editTextNomeCampeonato;
     int qtdeTimes;
-    ArrayList<Campeonato> campeonatos;
+    long idCampeonato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_novo_campeonato);
+        setContentView(R.layout.activity_editar_campeonato);
         intent = getIntent();
 
-        adicionaTime = findViewById(R.id.buttonAdicionaTime);
-        adicionaCampeonato = findViewById(R.id.buttonAdicionaCampeonato);
-        adicionaQtdTimes = findViewById(R.id.buttonAdicionaQtdTimes);
-        listViewTimes =  findViewById(R.id.listViewTimes);
-        editTextQtdTimes = findViewById(R.id.editTextQtdTimes);
-        editTextNomeCampeonato = findViewById(R.id.editTextNomeCampeonato);
+        adicionaTime = findViewById(R.id.buttonAdicionaTime2);
+        editaCampeonato = findViewById(R.id.buttonEditaCampeonato);
+        adicionaQtdTimes = findViewById(R.id.buttonAdicionaQtdTimes2);
+        listViewTimes =  findViewById(R.id.listViewTimes2);
+        editTextQtdTimes = findViewById(R.id.editTextQtdTimes2);
+        editTextNomeCampeonato = findViewById(R.id.editTextNomeCampeonato2);
 
-        recuperaTimes();
-        qtdeTimes = intent.getIntExtra("numeroTimes", 0);
-        editTextNomeCampeonato.setText(intent.getStringExtra("nomeCampeonato"));
-        recuperaAnterior();
         populalista();
+        recuperaAnterior();
         clickLista();
-
+        validaQntdTimes();
     }
-
-    private void recuperaTimes() {
-        if(intent.getStringArrayListExtra("times") == null){
-            times = new ArrayList<>();
-        }else{
-            times = intent.getStringArrayListExtra("times");
-        }
-    }
-
 
     public void adicionaNovoTime(View view){
         Intent intent = new Intent(this, CadastrarTimeActivity.class);
-        intent.putStringArrayListExtra("times", times);
         intent.putExtra("nomeCampeonato", editTextNomeCampeonato.getText().toString());
         intent.putExtra("numeroTimes", qtdeTimes);
         startActivity(intent);
@@ -75,7 +61,6 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
         if(validaNomeCampeonato()) {
             String nome = editTextNomeCampeonato.getText().toString();
             Campeonato campeonato = new Campeonato(nome);
-            campeonato.setQntdTimes(qtdeTimes);
             CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().inserir(campeonato);
             insereTimesCampeonato(CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().listaUltimoInserido().getId());
             Intent intent = new Intent(this, MainActivity.class);
@@ -87,19 +72,10 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
     }
 
     private void insereTimesCampeonato(long id) {
-        ArrayList<Time> times = transformaTime();
         for (Time time : times){
             time.setId_campeonato(id);
             CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().inserir(time);
         }
-    }
-
-    public ArrayList<Time> transformaTime(){
-        ArrayList<Time> timesTransformados =  new ArrayList<>();
-        for(String time : times){
-            timesTransformados.add(new Time(time));
-        }
-        return timesTransformados;
     }
 
     public void quantidadeTimes(View view){
@@ -121,24 +97,27 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
 
     private void validaQntdTimes() {
         if(times.size() == qtdeTimes){
-            adicionaCampeonato.setVisibility(View.VISIBLE);
+            editaCampeonato.setVisibility(View.VISIBLE);
             adicionaTime.setClickable(false);
         }else{
-            adicionaCampeonato.setVisibility(View.INVISIBLE);
+            editaCampeonato.setVisibility(View.INVISIBLE);
             adicionaTime.setClickable(true);
         }
+        populalista();
     }
 
     public void recuperaAnterior(){
+        idCampeonato = intent.getLongExtra("idCampeonato", -1);
+        System.out.println(idCampeonato);
+        qtdeTimes = CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().listaPorId(idCampeonato).getQntdTimes();
         if(qtdeTimes > 0 && qtdeTimes <= 20){
-            adicionaTime.setVisibility(View.VISIBLE);
-            listViewTimes.setVisibility(View.VISIBLE);
             editTextQtdTimes.setText(String.valueOf(qtdeTimes));
             validaQntdTimes();
         }
     }
     public void populalista(){
-        ArrayAdapter<Time> adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, transformaTime());
+        times = CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorCampeonato(idCampeonato);
+        ArrayAdapter<Time> adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, times);
         listViewTimes.setAdapter(adapter);
     }
 
@@ -156,19 +135,17 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
 
                 final CharSequence[] itens = {getString(R.string.alterar), getString(R.string.excluir), getString(R.string.cancelar)};
 
-                AlertDialog.Builder opcoes = new AlertDialog.Builder(NovoCampeonatoActivity.this);
+                AlertDialog.Builder opcoes = new AlertDialog.Builder(getApplicationContext());
                 opcoes.setItems(itens, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int op) {
                         String opcao = (String) itens[op];
                         if(opcao.equals(getString(R.string.alterar))){
-                            Intent intent = new Intent(NovoCampeonatoActivity.this, AlteraTimeActivity.class);
-                            intent.putExtra("time", position);
-                            intent.putStringArrayListExtra("times", times);
-                            intent.putExtra("nomeCampeonato", editTextNomeCampeonato.getText().toString());
-                            intent.putExtra("numeroTimes", qtdeTimes);
+                            Intent intent = new Intent(getApplicationContext(), AlteraTimeBancoActivity.class);
+                            intent.putExtra("time", CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorId(position).getId());
+                            intent.putExtra("idCampeonato", idCampeonato);
                             startActivity(intent);
-                            NovoCampeonatoActivity.this.finish();
+                            finish();
                         }else if(opcao.equals(getString(R.string.excluir))){
                             confirmaExcluir(time);
                         }else if(opcao.equals(getString(R.string.cancelar))){
@@ -187,8 +164,7 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
         confirma.setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                times.remove(time);
-                populalista();
+                CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().deletar(time);
                 validaQntdTimes();
             }
         });
@@ -200,4 +176,5 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
         });
         confirma.show();
     }
+
 }

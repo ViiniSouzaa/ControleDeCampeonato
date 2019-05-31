@@ -1,11 +1,13 @@
 package com.example.controledecampeonato.dao;
 
+import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
 import com.example.controledecampeonato.modelo.Campeonato;
 
 import java.util.List;
 
+@Dao
 public interface CampeonatoDAO extends DaoGenerico<Campeonato> {
 
     @Query("SELECT * FROM campeonato WHERE id = :id")

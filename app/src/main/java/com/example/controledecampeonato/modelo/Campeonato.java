@@ -15,6 +15,8 @@ public class Campeonato {
     private long id;
     @NonNull
     private String nome;
+    @NonNull
+    private int qntdTimes;
 
     public Campeonato(String nome) {
         this.nome = nome;
@@ -36,6 +38,13 @@ public class Campeonato {
         this.nome = nome;
     }
 
+    public int getQntdTimes() {
+        return qntdTimes;
+    }
+
+    public void setQntdTimes(int qntdTimes) {
+        this.qntdTimes = qntdTimes;
+    }
 
     @Override
     public String toString() {
