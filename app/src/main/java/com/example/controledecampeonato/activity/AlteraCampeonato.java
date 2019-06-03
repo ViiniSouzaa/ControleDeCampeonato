@@ -30,6 +30,7 @@ public class AlteraCampeonato extends AppCompatActivity {
     EditText editTextQtdTimes, editTextNomeCampeonato;
     int qtdeTimes;
     long idCampeonato;
+    Campeonato campeonato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,24 +45,23 @@ public class AlteraCampeonato extends AppCompatActivity {
         editTextQtdTimes = findViewById(R.id.editTextQtdTimes2);
         editTextNomeCampeonato = findViewById(R.id.editTextNomeCampeonato2);
 
-        populalista();
-        recuperaAnterior();
         clickLista();
+        recuperaAnterior();
         validaQntdTimes();
+        populalista();
     }
 
     public void adicionaNovoTime(View view){
         Intent intent = new Intent(this, CadastrarTimeActivity.class);
-        intent.putExtra("nomeCampeonato", editTextNomeCampeonato.getText().toString());
+        intent.putExtra("idCampeonato", idCampeonato);
         intent.putExtra("numeroTimes", qtdeTimes);
         startActivity(intent);
     }
 
-    public void adicionaNovoCampeonato(View view){
+    public void alterarCampeonato(View view){
         if(validaNomeCampeonato()) {
             String nome = editTextNomeCampeonato.getText().toString();
-            Campeonato campeonato = new Campeonato(nome);
-            CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().inserir(campeonato);
+            CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().alterar(campeonato);
             insereTimesCampeonato(CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().listaUltimoInserido().getId());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -108,13 +108,16 @@ public class AlteraCampeonato extends AppCompatActivity {
 
     public void recuperaAnterior(){
         idCampeonato = intent.getLongExtra("idCampeonato", -1);
-        System.out.println(idCampeonato);
+        campeonato = CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().listaPorId(idCampeonato);
+        editTextNomeCampeonato.setText(campeonato.getNome());
         qtdeTimes = CampeonatoDatabase.getDatabase(getApplicationContext()).campeonatoDAO().listaPorId(idCampeonato).getQntdTimes();
+        times = CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorCampeonato(idCampeonato);
         if(qtdeTimes > 0 && qtdeTimes <= 20){
             editTextQtdTimes.setText(String.valueOf(qtdeTimes));
             validaQntdTimes();
         }
     }
+
     public void populalista(){
         times = CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorCampeonato(idCampeonato);
         ArrayAdapter<Time> adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, times);
@@ -135,27 +138,31 @@ public class AlteraCampeonato extends AppCompatActivity {
 
                 final CharSequence[] itens = {getString(R.string.alterar), getString(R.string.excluir), getString(R.string.cancelar)};
 
-                AlertDialog.Builder opcoes = new AlertDialog.Builder(getApplicationContext());
-                opcoes.setItems(itens, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int op) {
-                        String opcao = (String) itens[op];
-                        if(opcao.equals(getString(R.string.alterar))){
-                            Intent intent = new Intent(getApplicationContext(), AlteraTimeBancoActivity.class);
-                            intent.putExtra("time", CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorId(position).getId());
-                            intent.putExtra("idCampeonato", idCampeonato);
-                            startActivity(intent);
-                            finish();
-                        }else if(opcao.equals(getString(R.string.excluir))){
-                            confirmaExcluir(time);
-                        }else if(opcao.equals(getString(R.string.cancelar))){
-                            dialog.cancel();
-                        }
-                    }
-                });
-                opcoes.show();
+                clickItem(itens, time, position);
             }
         });
+    }
+
+    private void clickItem(final CharSequence[] itens, final Time time, final int position) {
+        AlertDialog.Builder opcoes = new AlertDialog.Builder(this);
+        opcoes.setItems(itens, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int op) {
+                String opcao = (String) itens[op];
+                if(opcao.equals(getString(R.string.alterar))){
+                    Intent intent = new Intent(getApplicationContext(), AlteraTimeBancoActivity.class);
+                    intent.putExtra("time", CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorId(time.getId()).getId());
+                    intent.putExtra("idCampeonato", idCampeonato);
+                    startActivity(intent);
+                    finish();
+                }else if(opcao.equals(getString(R.string.excluir))){
+                    confirmaExcluir(time);
+                }else if(opcao.equals(getString(R.string.cancelar))){
+                    dialog.cancel();
+                }
+            }
+        });
+        opcoes.show();
     }
 
     public void confirmaExcluir(final Time time){

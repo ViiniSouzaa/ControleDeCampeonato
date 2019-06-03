@@ -16,7 +16,9 @@ import com.example.controledecampeonato.modelo.Time;
 public class AlteraTimeBancoActivity extends AppCompatActivity {
     Intent intent;
     EditText editTextNomeTime;
-    int time;
+    long idtime;
+    Time timeTemp;
+    long idCamp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,16 +27,20 @@ public class AlteraTimeBancoActivity extends AppCompatActivity {
         intent = getIntent();
 
         editTextNomeTime = findViewById(R.id.editTextNomeTime2);
-        time = intent.getIntExtra("time", -1);
+        idtime = intent.getLongExtra("time", -1);
+        idCamp = intent.getLongExtra("idCampeonato", -1);
+
+        timeTemp = CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorId(idtime);
+
+        editTextNomeTime.setText(timeTemp.getNome());
     }
 
     public void alteraTime(View view) {
         if (validaTime()) {
-            Time timeTemp = CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().listaPorId(time);
             timeTemp.setNome(editTextNomeTime.getText().toString());
             CampeonatoDatabase.getDatabase(getApplicationContext()).timeDAO().alterar(timeTemp);
             Intent intent = new Intent(this, AlteraCampeonato.class);
-            intent.putExtra("idCampeonato", intent.getIntExtra("idCampeonato", -1));
+            intent.putExtra("idCampeonato", idCamp);
             startActivity(intent);
         }else{
             Toast.makeText(this, R.string.insira_nome_time, Toast.LENGTH_LONG).show();

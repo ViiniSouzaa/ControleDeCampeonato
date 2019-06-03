@@ -36,6 +36,9 @@ public class CadastrarTimeActivity  extends AppCompatActivity {
         times = intent.getStringArrayListExtra("times");
         nomeCampeonato = intent.getStringExtra("nomeCampeonato");
         quantTimes = intent.getIntExtra("numeroTimes", 0);
+        if(times == null){
+            times = new ArrayList<>();
+        }
     }
 
     public void adicionaNovoTime(View view) {

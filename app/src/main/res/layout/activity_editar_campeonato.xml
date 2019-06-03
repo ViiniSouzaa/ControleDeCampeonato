@@ -50,7 +50,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/button"
-        android:onClick="adicionaNovoCampeonato"
+        android:onClick="alterarCampeonato"
         android:text="@string/editar"
         android:textColor="@color/text"
         app:layout_constraintBottom_toBottomOf="parent"
