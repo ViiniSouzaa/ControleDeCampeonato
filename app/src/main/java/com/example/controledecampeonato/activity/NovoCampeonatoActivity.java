@@ -3,9 +3,14 @@ package com.example.controledecampeonato.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -31,6 +36,10 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
     EditText editTextQtdTimes, editTextNomeCampeonato;
     int qtdeTimes;
     ArrayList<Campeonato> campeonatos;
+
+    private ActionMode actionMode;
+    private int posicaoSelecionado = -1;
+    private View viewSelecionada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,43 +160,88 @@ public class NovoCampeonatoActivity extends AppCompatActivity {
     private void clickLista() {
         listViewTimes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapter, View view, final int position, long id) {
-                final Time time = (Time) adapter.getAdapter().getItem(position);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                posicaoSelecionado = position;
+                alterarSelecionado();
+            }
+        });
 
-                final CharSequence[] itens = {getString(R.string.alterar), getString(R.string.excluir), getString(R.string.cancelar)};
+        listViewTimes.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-                AlertDialog.Builder opcoes = new AlertDialog.Builder(NovoCampeonatoActivity.this);
-                opcoes.setItems(itens, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int op) {
-                        String opcao = (String) itens[op];
-                        if(opcao.equals(getString(R.string.alterar))){
-                            Intent intent = new Intent(NovoCampeonatoActivity.this, AlteraTimeActivity.class);
-                            intent.putExtra("time", position);
-                            intent.putStringArrayListExtra("times", times);
-                            intent.putExtra("nomeCampeonato", editTextNomeCampeonato.getText().toString());
-                            intent.putExtra("numeroTimes", qtdeTimes);
-                            startActivity(intent);
-                            NovoCampeonatoActivity.this.finish();
-                        }else if(opcao.equals(getString(R.string.excluir))){
-                            confirmaExcluir(time);
-                        }else if(opcao.equals(getString(R.string.cancelar))){
-                            dialog.cancel();
-                        }
-                    }
-                });
-                opcoes.show();
+        listViewTimes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (actionMode != null) {
+                    return false;
+                }
+                posicaoSelecionado = position;
+                view.setBackgroundColor(Color.LTGRAY);
+                viewSelecionada = view;
+                listViewTimes.setEnabled(true);
+                actionMode = startSupportActionMode(mActionModeCallback);
+
+                return true;
             }
         });
     }
 
-    public void confirmaExcluir(final Time time){
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_editar_excluir, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menuItemAlterar:
+                    alterarSelecionado();
+                    mode.finish();
+                    return true;
+
+                case R.id.menuItemDelete:
+                    confirmaExcluir();
+                    mode.finish();
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            if (viewSelecionada != null) {
+                viewSelecionada.setBackgroundColor(Color.TRANSPARENT);
+            }
+            actionMode = null;
+            viewSelecionada = null;
+
+            listViewTimes.setEnabled(true);
+        }
+    };
+
+    public void alterarSelecionado(){
+        Intent intent = new Intent(NovoCampeonatoActivity.this, AlteraTimeActivity.class);
+        intent.putExtra("time", posicaoSelecionado);
+        intent.putStringArrayListExtra("times", times);
+        intent.putExtra("nomeCampeonato", editTextNomeCampeonato.getText().toString());
+        intent.putExtra("numeroTimes", qtdeTimes);
+        startActivity(intent);
+
+    }
+    public void confirmaExcluir(){
         AlertDialog.Builder confirma = new AlertDialog.Builder(this);
         confirma.setMessage(getString(R.string.deseja_excluir));
         confirma.setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                times.remove(time);
+                times.remove(times.get(posicaoSelecionado));
                 populalista();
                 validaQntdTimes();
             }

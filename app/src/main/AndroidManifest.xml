@@ -49,6 +49,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.controledecampeonato.activity.MainActivity" />
         </activity>
+        <activity android:name=".activity.InsereTimeBanco">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.controledecampeonato.activity.AlteraCampeonato" />
+        </activity>
     </application>
 
 </manifest>
